@@ -1,3 +1,6 @@
+import firebase_admin
+from firebase_admin import credentials, firestore
+import json
 import streamlit as st
 from c4_gameLogic import (
     is_valid_location, game_is_won, get_valid_locations, create, makeMove,
@@ -9,19 +12,12 @@ import time
 
 
 # -------------------- DATABASE SETUP --------------------
-import firebase_admin
-from firebase_admin import credentials, firestore
-import json
 
-# Initialize Firebase safely using Streamlit Secrets
+
 if not firebase_admin._apps:
-    try:
-        firebase_key = json.loads(st.secrets["FIREBASE_KEY"])
-        cred = credentials.Certificate(firebase_key)
-        firebase_admin.initialize_app(cred)
-    except Exception as e:
-        st.error("⚠️ Firebase initialization failed. Did you add FIREBASE_KEY to Streamlit secrets?")
-        st.stop()
+    firebase_key = json.loads(st.secrets["FIREBASE_KEY"])
+    cred = credentials.Certificate(firebase_key)
+    firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 record_ref = db.collection("connect4").document("record")
