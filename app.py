@@ -7,12 +7,35 @@ from c4_constants import ROW_COUNT, COLUMN_COUNT, RED_INT, BLUE_INT, HUMAN, COMP
 import c4_alphaBetaPruning as abp
 import time
 
+
+# -------------------- DATABASE SETUP --------------------
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+# Initialize Firestore (only once)
+if not firebase_admin._apps:
+    cred = credentials.Certificate("firebase-key.json")  # path to your key file
+    firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+record_ref = db.collection("connect4").document("record")
+
+def load_record():
+    doc = record_ref.get()
+    if not doc.exists:
+        record_ref.set({"Player Wins": 0, "AI Wins": 0, "Draws": 0})
+        return {"Player Wins": 0, "AI Wins": 0, "Draws": 0}
+    return doc.to_dict()
+
+def save_record(record):
+    record_ref.set(record)
+
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Connect 4 AI", layout="centered")
 
 # -------------------- SAFELY INITIALIZE STATE --------------------
 if "record" not in st.session_state:
-    st.session_state["record"] = {"Player Wins": 0, "AI Wins": 0, "Draws": 0}
+    st.session_state["record"] = load_record()
 if "state" not in st.session_state:
     st.session_state["state"] = None
 if "game_over" not in st.session_state:
@@ -166,12 +189,15 @@ else:
                         # Check game status and update record HERE
                         if game_is_won(st.session_state.state[0], RED_INT):
                             st.session_state.record["Player Wins"] += 1
+                            save_record(st.session_state["record"])
                             st.session_state.game_over = True
                         elif game_is_won(st.session_state.state[0], BLUE_INT):
                             st.session_state.record["AI Wins"] += 1
+                            save_record(st.session_state["record"])
                             st.session_state.game_over = True
                         elif len(get_valid_locations(st.session_state.state[0])) == 0:
                             st.session_state.record["Draws"] += 1
+                            save_record(st.session_state["record"])
                             st.session_state.game_over = True
                         st.rerun()
                     else:
@@ -185,12 +211,15 @@ else:
         # Check game status and update record HERE
         if game_is_won(st.session_state.state[0], BLUE_INT):
             st.session_state.record["AI Wins"] += 1
+            save_record(st.session_state["record"])
             st.session_state.game_over = True
         elif game_is_won(st.session_state.state[0], RED_INT):
             st.session_state.record["Player Wins"] += 1
+            save_record(st.session_state["record"])
             st.session_state.game_over = True
         elif len(get_valid_locations(st.session_state.state[0])) == 0:
             st.session_state.record["Draws"] += 1
+            save_record(st.session_state["record"])
             st.session_state.game_over = True
         st.write(f"AI played in column **{col+1}** ({end-start:.2f}s)")
         st.rerun()

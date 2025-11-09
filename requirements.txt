@@ -1,1 +1,3 @@
 termcolor
+tinydb
+firebase-admin
