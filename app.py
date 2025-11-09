@@ -150,7 +150,7 @@ st.markdown("---")
 # -------------------- GAME LOOP --------------------
 if game_status():
     if st.button("Play Again"):
-        for key in ['state', 'game_over', 'winner', 'first_choice']:
+        for key in ['state', 'game_over', 'winner']:  # Remove 'first_choice'
             if key in st.session_state:
                 del st.session_state[key]
         st.rerun()
@@ -203,7 +203,7 @@ with st.expander("⚙️ Settings"):
     st.session_state.search_depth = st.slider("Search Depth", 2, 7, st.session_state.search_depth)
 
     if st.button("New Game"):
-        for key in ['state', 'game_over', 'winner', 'first_choice']:
+        for key in ['state', 'game_over', 'winner']:  # Remove 'first_choice'
             if key in st.session_state:
                 del st.session_state[key]
         st.rerun()
