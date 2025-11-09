@@ -100,7 +100,7 @@ div[data-testid="stButton"] > button {
 st.markdown(f"""
 <div class="record-box">
   <h4>🏆 Record</h4>
-  🔴 You: <b>{record['Player Wins']}</b><br>
+  🔴 Player: <b>{record['Player Wins']}</b><br>
   🔵 AI: <b>{record['AI Wins']}</b><br>
   🤝 Draws: <b>{record['Draws']}</b>
 </div>
