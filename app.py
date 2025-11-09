@@ -51,6 +51,7 @@ if "search_depth" not in st.session_state:
     st.session_state["search_depth"] = 4
 
 record = st.session_state["record"]
+st.session_state["search_depth"] = 5
 
 # -------------------- STYLES --------------------
 st.markdown("""
@@ -230,16 +231,5 @@ else:
         st.rerun()
 
 st.markdown("---")
-
-# -------------------- SETTINGS --------------------
-with st.expander("⚙️ Settings"):
-    st.write("**Search Depth (higher = stronger AI, slower)**")
-    st.session_state.search_depth = st.slider("Search Depth", 2, 7, st.session_state.search_depth)
-
-    if st.button("New Game"):
-        for key in ['state', 'game_over', 'winner']:  # Remove 'first_choice'
-            if key in st.session_state:
-                del st.session_state[key]
-        st.rerun()
 
 st.caption("Built with Streamlit | Connect 4 AI using Alpha-Beta Pruning")
