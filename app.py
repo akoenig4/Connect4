@@ -11,11 +11,20 @@ import time
 # -------------------- DATABASE SETUP --------------------
 import firebase_admin
 from firebase_admin import credentials, firestore
+import json
 
-# Initialize Firestore (only once)
+# Initialize Firebase safely using Streamlit Secrets
 if not firebase_admin._apps:
-    cred = credentials.Certificate("firebase-key.json")  # path to your key file
-    firebase_admin.initialize_app(cred)
+    try:
+        firebase_key = json.loads(st.secrets["FIREBASE_KEY"])
+        cred = credentials.Certificate(firebase_key)
+        firebase_admin.initialize_app(cred)
+    except Exception as e:
+        st.error("⚠️ Firebase initialization failed. Did you add FIREBASE_KEY to Streamlit secrets?")
+        st.stop()
+
+db = firestore.client()
+record_ref = db.collection("connect4").document("record")
 
 db = firestore.client()
 record_ref = db.collection("connect4").document("record")
